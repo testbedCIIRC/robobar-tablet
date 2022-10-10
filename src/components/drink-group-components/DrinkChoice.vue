@@ -1,4 +1,4 @@
-<template>
+  ``<template>
   <div class="drinkGridContainer" >
     <template v-for="drinkType in drinkTypes" :key="drinkType.id">
       <button class="drinkGroupButton" v-if="drinkType.enabled" @click="selectDrink(drinkType.id);" >
@@ -23,7 +23,7 @@ import BeakerIconSvg from '@/components/svg-components/BeakerIconSvg.vue';
 import MilkIconSvg from '@/components/svg-components/MilkIconSvg.vue';
 
 export default {
-    name: "GroupDrinks",
+    name: "DrinkChoice",
     methods: {
       selectDrink(drinkId) {
         this.$emit('selectDrink', drinkId);

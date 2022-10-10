@@ -1,13 +1,23 @@
 export async function getDrinkTypesFromApi() {
     return fetch("http://127.0.0.1:5000/DrinkTypes/")
         .then(response => response.json())
-        .then(data =>{return data});
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        });
 }
 
 export async function getQueueStateFromApi() {
     return fetch("http://127.0.0.1:5000/QueueState/")
         .then(response => response.json())
-        .then(data =>{return data});
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        });
 }
 
 export async function pushNewDrinkOrderToQueue(newDrinkOrder) {
@@ -19,7 +29,12 @@ export async function pushNewDrinkOrderToQueue(newDrinkOrder) {
         body: JSON.stringify(newDrinkOrder),
     })
         .then(response => response.json())
-        .then(data =>{return data});
+        .then(data =>{
+            return data;
+        })
+        .catch(error => {
+            console.error('Error: ', error);
+        });
 }
 
 // export async function getPickUpDrinksStateFromApi() {

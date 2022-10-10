@@ -8,7 +8,7 @@
         Your order number:
       </h2>
       <div class="order-number">
-        123
+        {{ orderNumber }}
       </div>
     </div>
     <!-- <h2>
@@ -26,7 +26,10 @@
 export default {
   name: 'DrinkOrderConclusion',
   props: {
-    msg: String
+    orderNumber: {
+      type: Number,
+      default: undefined,
+    }
   },
   methods: {
     goToHomePage() {

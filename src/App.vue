@@ -1,19 +1,27 @@
 <template>
-  <component @makeOrder="makeOrder" :newOrder="newOrder" :drinkTypes="drinkTypes" :drinkGroupEnum="drinkGroupEnum" :is="currentPage" @changeScreen="changeScreen($event)" v-bind="{'newScreen':'HomePage'}"></component>
+  <component 
+    @makeOrder="makeOrder"
+    @changeScreen="changeScreen" 
+    :newOrder="newOrder" 
+    :drinkTypes="drinkTypes" 
+    :drinkGroupEnum="drinkGroupEnum" 
+    :is="currentPage" 
+    :orderNumber="newOrderStatus.pushedOrderNumber"
+    v-bind="{'newScreen':'HomePage'}"></component>
 </template>
 
 <script>
 import HomePage from '@/components/HomePage.vue'
-import DrinkGroupChoice from  '@/components/DrinkGroupChoice.vue'
 import DrinkOrderConclusion from '@/components/DrinkOrderConclusion.vue'
 import DrinkOrderProcessing from '@/components/DrinkOrderProcessing.vue'
 import * as apicomm from '@/scripts/api-communication.js'
+import DrinkOrderConfigurator from '@/components/DrinkOrderConfigurator.vue'
 
 export default {
   name: 'App',
   components: {
       HomePage,
-      DrinkGroupChoice,
+      DrinkOrderConfigurator,
       DrinkOrderConclusion,
       DrinkOrderProcessing,
   },

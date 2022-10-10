@@ -7,7 +7,7 @@
     </div>
     <h1>ORDER A DRINK!</h1>
     
-    <svg class="tapCircle" @click="changeScreen('DrinkGroupChoice')" viewBox="0 0 100 100">
+    <svg class="tapCircle" @click="changeScreen('DrinkOrderConfigurator')" viewBox="0 0 100 100">
         <circle stroke="white" stroke-width="2%" class="white" cx="50%" cy="50%" r="49%" fill="white"></circle>
         <!-- <image x="25%" y="6%" dominant-baseline="middle" href="tap_hand_icon.svg"/>  -->
         <text class="black" x="50%" y="66%" dominant-baseline="middle" text-anchor="middle">

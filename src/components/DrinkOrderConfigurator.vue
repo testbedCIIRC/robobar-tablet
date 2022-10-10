@@ -1,28 +1,26 @@
 <template>
-  <nav :class="{'drink-group-chosen': drinkGroupChosen}">
-    <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.coffeeDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.coffeeDrinks}">
-      <div class="icons"><CoffeeIconSvg /></div>
-      <div class="text"><span>Coffee</span></div>
-    </button>
-    <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.softDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.softDrinks}">
-      <div class="icons"><SoftDrinkIconSvg /></div>
-      <div class="text"><span>Soft drinks</span></div>
-    </button>
-    <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.alcoholicDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.alcoholicDrinks}">
-      <div class="icons"><AlcoholIconSvg /></div>
-      <div class="text"><span>Alcohol</span></div>
-    </button>
-  </nav>
+  <div id="drink-group-choice" class="content">
+    <h1>
+      NEW ORDER
+    </h1>
+    <DrinkGroupChoice @filterDrinkTypesByGroup="filterDrinkTypesByGroup" :drinkGroupEnum="drinkGroupEnum" />
+    <DrinkChoice :drinkTypes="filteredDrinkTypes" @selectDrink="selectDrink" :class="{ hidden: !drinkGroupChosen }" :enabled="drinkGroup" />
+    <DrinkSubChoice @selectSubChoice="selectSubChoice" :activeSubChoice="activeSubChoice" />
+  </div>
 </template>
 
 <script>
-import CoffeeIconSvg from '@/components/svg-components/CoffeeIconSvg.vue';
-import SoftDrinkIconSvg from '@/components/svg-components/SoftDrinkIconSvg.vue';
-import AlcoholIconSvg from '@/components/svg-components/AlcoholIconSvg.vue';
+import DrinkSubChoice from '@/components/DrinkSubChoice.vue';
+import DrinkChoice from '@/components/drink-group-components/DrinkChoice.vue';
+import DrinkGroupChoice from '@/components/DrinkGroupChoice.vue';
 
 export default {
-    name: "DrinkGroupChoice",
+    name: "DrinkOrderConfigurator",
     props: {
+        drinkTypes: {
+          type: Array,
+          default: () => {return [];}
+        },
         drinkGroupEnum: {
           type: Object,
           default: () => {return Object();}
@@ -32,27 +30,83 @@ export default {
       return {
         drinkGroup: "none",
         drinkGroupChosen: false,
+        drinkChosen: false,
+        newOrder: {
+          drinkId: undefined,
+          subChoices: {
+            useIce: undefined,
+            useLargeGlass: undefined,
+          },
+        },
+        activeSubChoice: {
+          key: undefined,
+          availableOptions: undefined,
+        },
+        filteredDrinkTypes: [],
       }
     },
     components: {
-     CoffeeIconSvg,
-     SoftDrinkIconSvg,
-     AlcoholIconSvg,
-    }, methods: {
-      setDrinkGroup(chosenDrinkGroup) {
-        this.drinkGroup = chosenDrinkGroup;
-        console.log(this.drinkGroup);
-        this.$emit('filterDrinkTypesByGroup', this.drinkGroup);
-      },
-      hideDrinkGroupIcons() {
-        const $nav = document.getElementsByTagName("nav")[0];
-        const $navButtonSvgArray = $nav.getElementsByClassName("icons");
-        for(const $elem of $navButtonSvgArray) {
-          $elem.style.display = "none";
+    DrinkSubChoice,
+    DrinkChoice,
+    DrinkGroupChoice
+}, methods: {
+      selectSubChoice(optionValue) {
+        // this.$emit('changeScreen', 'DrinkOrderConclusion');
+        this.newOrder.subChoices[this.activeSubChoice.key] = optionValue;
+        if (this.activeSubChoice.key == "useIce" && this.drinkTypes[this.drinkId].volumeOption) {
+          this.activeSubChoice.key = "useLargeGlass";
+          this.activeSubChoice.availableOptions = [
+            { label: '250 ML', value: false, id: 0 },
+            { label: '400 ML', value: true, id: 1 },
+          ];
+        } else {
+          this.$emit('makeOrder', this.newOrder);
         }
-        this.drinkGroupChosen = true;
       },
+      selectDrink(drinkId) {
+        this.drinkChosen = true;
+        this.newOrder.drinkId = drinkId;
 
+        const $nav = document.getElementsByTagName("nav")[0];
+        const $groupDrink = document.getElementsByClassName("drinkGridContainer")[0];
+        $nav.style.display = "none";
+        $groupDrink.style.display = "none";
+
+        if (this.drinkTypes[drinkId].iceOption) {
+          this.activeSubChoice.key = "useIce";
+          this.activeSubChoice.availableOptions = [
+            { label: 'WITHOUT ICE', value: false, id: 0 },
+            { label: 'WITH ICE', value: true, id: 1 },
+          ];
+          this.newOrder.subChoices.useIce = false;
+        } else if (this.drinkTypes[drinkId].volumeOption) {
+          this.activeSubChoice.key = "useLargeGlass";
+          this.activeSubChoice.availableOptions = [
+            { label: '250 ML', value: false, id: 0 },
+            { label: '400 ML', value: true, id: 1 },
+          ];
+        } else {
+          this.newOrder.subChoices.useIce = false;
+          this.newOrder.subChoices.useLargeGlass = false;
+          this.$emit('makeOrder', this.newOrder);
+        }
+      },
+      filterDrinkTypesByGroup(group) {
+        this.drinkGroup = group;
+        this.filteredDrinkTypes = Array();
+
+        this.drinkTypes.forEach((drinkType) => {
+          if (drinkType.drinkGroups) {
+            if (drinkType.drinkGroups.alcohol && group === this.drinkGroupEnum.alcoholicDrinks) {
+              this.filteredDrinkTypes.push(drinkType);
+            } else if (drinkType.drinkGroups.coffee && group === this.drinkGroupEnum.coffeeDrinks) {
+              this.filteredDrinkTypes.push(drinkType);
+            } else if (drinkType.drinkGroups.soft && group === this.drinkGroupEnum.softDrinks) {
+              this.filteredDrinkTypes.push(drinkType);
+            }
+          }
+        });
+      },
     }
 }
 </script>
