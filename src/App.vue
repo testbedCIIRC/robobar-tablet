@@ -3,7 +3,8 @@
     @makeOrder="makeOrder"
     @changeScreen="changeScreen" 
     :newOrder="newOrder" 
-    :drinkTypes="drinkTypes" 
+    :drinkTypes="drinkTypes"
+    :drinkTypesLoaded="drinkTypes !== undefined" 
     :drinkGroupEnum="drinkGroupEnum" 
     :is="currentPage" 
     :orderNumber="newOrderStatus.pushedOrderNumber"
@@ -46,15 +47,32 @@ export default {
         orderPushedSuccessfully: undefined,
         pushedOrderNumber: undefined,
       },
+      drinkTypesCheckPeriodInMs: {
+        fast: 1000,
+        slow: 3000,
+      },
     }
   },
   async created() {
-    let drinkTypes = await apicomm.getDrinkTypesFromApi();
-    this.drinkTypes = drinkTypes["drinkTypes"];
-    
+    this.startPeriodicCheckForDrinkTypes();
     // TODO: periodic PLC/OPC status update
   },
   methods: {
+    async startPeriodicCheckForDrinkTypes() {
+      try {
+        let drinkTypes = await apicomm.getDrinkTypesFromApi();
+        this.drinkTypes = drinkTypes["drinkTypes"];
+
+        setTimeout(() => {this.startPeriodicCheckForDrinkTypes()}, this.drinkTypesCheckPeriodInMs.slow);
+      } catch (error) {
+        console.error("Error: Unable to get drink types.");
+        if (this.currentPage !== 'HomePage') {
+          this.currentPage = 'HomePage';
+        }
+
+        setTimeout(() => {this.startPeriodicCheckForDrinkTypes()}, this.drinkTypesCheckPeriodInMs.fast);
+      }
+    },
     changeScreen(newScreenName, drinkId) {
       if (drinkId === undefined) {
         this.currentPage = newScreenName;

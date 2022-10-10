@@ -6,10 +6,8 @@
           <img id="pilsner-logo" src="@/assets/Pilsner_Urquell_logo_bile.svg" alt="Pilsner logo">
     </div>
     <h1>ORDER A DRINK!</h1>
-    
-    <svg class="tapCircle" @click="changeScreen('DrinkOrderConfigurator')" viewBox="0 0 100 100">
+    <svg v-if="drinkTypesLoaded" class="tapCircle" @click="changeScreen('DrinkOrderConfigurator')" viewBox="0 0 100 100">
         <circle stroke="white" stroke-width="2%" class="white" cx="50%" cy="50%" r="49%" fill="white"></circle>
-        <!-- <image x="25%" y="6%" dominant-baseline="middle" href="tap_hand_icon.svg"/>  -->
         <text class="black" x="50%" y="66%" dominant-baseline="middle" text-anchor="middle">
             TAP
         </text>
@@ -18,11 +16,18 @@
         </text>
         <TapHandIconSvg width="50%" x="25%" y="-15%" :white="!flipFlopSwitch ? true : false" />
     </svg>
+    <svg v-else class="loadingCircle" viewBox="0 0 100 100" >
+        <path d="M 98 50 A 48 48 0 0 1 50 98" stroke-width="2%" stroke="white"/>
+        <text x="50%" y="66%" dominant-baseline="middle" text-anchor="middle">
+            TAP
+        </text>
+    </svg>
   </div>
 </template>
 
 <script>
-import TapHandIconSvg from './svg-components/TapHandIconSvg.vue';
+/* eslint-disable vue/no-unused-components */
+import TapHandIconSvg from '@/components/svg-components/TapHandIconSvg.vue';
 
 export default {
     name: 'HomePage',
@@ -30,20 +35,38 @@ export default {
         TapHandIconSvg
     },
     props: {
-    // msg: String,
+        drinkTypesLoaded: {
+            type: Boolean,
+            default: () => {return false},
+        },
     },
     data() {
         return {
             flashingInterval: Number,
-            flipFlopSwitch: Boolean
+            rotatingInterval: Number,
+            flipFlopSwitch: Boolean,
+            rotationAngle: Number,
         }
     },
     mounted: function() {
-        this.startFlashing();
+        if (this.drinkTypesLoaded) {
+            this.startFlashing();
+        } else {
+            this.rotationAngle = 0;
+            this.startRotating();
+        }
     },
     methods: {
         changeScreen(newScreen) {
             this.$emit('changeScreen', newScreen);
+        },
+        startRotating() {
+            const $rotatingSvg = document.getElementsByClassName("loadingCircle")[0];
+
+            this.rotatingInterval = setInterval(() => {
+                $rotatingSvg.setAttribute('transform', `rotate(${this.rotationAngle})`);
+                this.rotationAngle += 5;
+            }, 10);
         },
         startFlashing() {
             const $tapSvg = document.getElementsByClassName("tapCircle")[0];
@@ -73,10 +96,14 @@ export default {
         },
         stopFlashing() {
             clearInterval(this.flashingInterval);
+        },
+        stopRotating() {
+            clearInterval(this.rotatingInterval);
         }
     },
     beforeUnmount() {
         this.stopFlashing();
+        this.stopRotating();
     },
 }
 </script>
@@ -146,7 +173,7 @@ export default {
         font-weight: 400;
     }
 
-    .tapCircle {
+    .tapCircle, .loadingCircle {
         width: 50%;
         aspect-ratio: 1/1;
         position: relative;
