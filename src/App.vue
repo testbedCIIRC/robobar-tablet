@@ -60,8 +60,8 @@ export default {
   methods: {
     async startPeriodicCheckForDrinkTypes() {
       try {
-        let drinkTypes = await apicomm.getDrinkTypesFromApi();
-        this.drinkTypes = drinkTypes["drinkTypes"];
+        let drinkTypesMessage = await apicomm.getDrinkTypesFromApi();
+        this.drinkTypes = drinkTypesMessage["data"]["drinkTypes"];
 
         setTimeout(() => {this.startPeriodicCheckForDrinkTypes()}, this.drinkTypesCheckPeriodInMs.slow);
       } catch (error) {
@@ -84,17 +84,28 @@ export default {
       this.changeScreen('DrinkOrderProcessing');
       this.newOrder = newOrder;
 
-      let newOrderStatus = await apicomm.pushNewDrinkOrderToQueue(this.newOrder);
-      console.log(newOrderStatus);
-      if (newOrderStatus && newOrderStatus.newOrderStatus) {
-        this.newOrderStatus.orderPushedSuccessfully = newOrderStatus.newOrderStatus.orderPushedSuccessfully;
-        this.newOrderStatus.pushedOrderNumber = newOrderStatus.newOrderStatus.pushedOrderNumber;
+      const newOrderStatusMessage = await apicomm.pushNewDrinkOrderToQueue(this.newOrder);
 
-        if (this.newOrderStatus.orderPushedSuccessfully) {
-          this.changeScreen('DrinkOrderConclusion');
-        } else {
-          this.changeScreen('HomePage');
+      try {
+        const newOrderStatus = newOrderStatusMessage["data"];
+        
+        console.log(newOrderStatus);
+        
+        if (newOrderStatus && newOrderStatus.newOrderStatus) {
+          this.newOrderStatus.orderPushedSuccessfully = newOrderStatus.newOrderStatus.orderPushedSuccessfully;
+          this.newOrderStatus.pushedOrderNumber = newOrderStatus.newOrderStatus.pushedOrderNumber;
+
+          if (this.newOrderStatus.orderPushedSuccessfully) {
+            this.changeScreen('DrinkOrderConclusion');
+          } else {
+            this.changeScreen('HomePage');
+          }
         }
+      } catch(error) {
+        console.log(error);
+        console.log(
+          `Unable to push new order to queue. Status Code: ${newOrderStatusMessage['statusCode']}`);
+        this.changeScreen('HomePage');
       }
     }
   }

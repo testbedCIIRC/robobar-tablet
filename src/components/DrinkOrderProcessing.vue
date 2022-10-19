@@ -3,7 +3,7 @@
     <h1>
       Hold on! We are processing your order!
     </h1>
-    <button @click="goToHomePage();">Confirm</button>
+    <button @click="goToHomePage">Confirm</button>
   </div>
 </template>
 
@@ -69,7 +69,6 @@ export default {
         }
     }
     h2 {
-        // margin: 0;
         text-align: center;
         @media only screen and (min-width: 992px) {
             font-size: 3vw;
@@ -85,14 +84,12 @@ export default {
     button {
       @media only screen and (min-width: 992px) {
           @include sizedBoxShadow(calc(0.5vw));
-          // font-size: .6rem;
           width: 50%;
           height: 10vw;
       }
 
       @media only screen and (max-width: 991px) {
           @include sizedBoxShadow(calc(1vw));
-          // font-size: .4rem;
           width: 50%;
           height: 15vw;
       }
