@@ -53,7 +53,7 @@ export default {
       selectSubChoice(optionValue) {
         // this.$emit('changeScreen', 'DrinkOrderConclusion');
         this.newOrder.subChoices[this.activeSubChoice.key] = optionValue;
-        if (this.activeSubChoice.key == "useIce" && this.drinkTypes[this.drinkId].volumeOption) {
+        if (this.activeSubChoice.key == "useIce" && this.drinkTypes[this.newOrder.drinkId].volumeOption) {
           this.activeSubChoice.key = "useLargeGlass";
           this.activeSubChoice.availableOptions = [
             { label: '250 ML', value: false, id: 0 },
@@ -95,6 +95,8 @@ export default {
         this.drinkGroup = group;
         this.filteredDrinkTypes = Array();
 
+        this.drinkGroupChosen = true;
+
         this.drinkTypes.forEach((drinkType) => {
           if (drinkType.drinkGroups) {
             if (drinkType.drinkGroups.alcohol && group === this.drinkGroupEnum.alcoholicDrinks) {
@@ -123,6 +125,8 @@ export default {
   display: none;
 }
 
+.content > * + * { margin-top: 3vh;}
+
 .content {
     @media only screen and (min-width: 992px) {
         width: 60%;
@@ -140,7 +144,7 @@ export default {
     flex-flow: column nowrap;
     align-items: stretch;
     justify-content: center;
-    gap: 3vh;
+    // gap: 3vh;
 
     h1 {
         text-align: center;

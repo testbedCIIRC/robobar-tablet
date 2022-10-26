@@ -1,5 +1,5 @@
 export async function getDrinkTypesFromApi() {
-    return fetch("http://127.0.0.1:5000/DrinkTypes/")
+    return fetch(`http://${ location.host.split(':')[0] }:5000/DrinkTypes/`)
         .then(response => response.json())
         .then(data => {
             return data;
@@ -10,7 +10,10 @@ export async function getDrinkTypesFromApi() {
 }
 
 export async function getQueueStateFromApi() {
-    return fetch("http://127.0.0.1:5000/QueueState/")
+    return fetch(`http://${ location.host.split(':')[0] }:5000/QueueState/`, {
+        method: 'GET',
+        mode: 'cors',
+    })
         .then(response => response.json())
         .then(data => {
             return data;
@@ -21,8 +24,9 @@ export async function getQueueStateFromApi() {
 }
 
 export async function pushNewDrinkOrderToQueue(newDrinkOrder) {
-    return fetch("http://127.0.0.1:5000/NewDrinkInQueue/", {
+    return fetch(`http://${ location.host.split(':')[0] }:5000/NewDrinkInQueue/`, {
         method: 'POST',
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/json',
         },

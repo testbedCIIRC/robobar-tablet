@@ -7,7 +7,7 @@
     :drinkTypesLoaded="drinkTypes !== undefined" 
     :drinkGroupEnum="drinkGroupEnum" 
     :is="currentPage" 
-    :orderNumber="newOrderStatus.pushedOrderNumber"
+    :newOrderStatus="newOrderStatus"
     v-bind="{'newScreen':'HomePage'}"></component>
 </template>
 
@@ -46,6 +46,7 @@ export default {
       newOrderStatus: {
         orderPushedSuccessfully: undefined,
         pushedOrderNumber: undefined,
+        statusCode: undefined,
       },
       drinkTypesCheckPeriodInMs: {
         fast: 1000,
@@ -55,7 +56,6 @@ export default {
   },
   async created() {
     this.startPeriodicCheckForDrinkTypes();
-    // TODO: periodic PLC/OPC status update
   },
   methods: {
     async startPeriodicCheckForDrinkTypes() {
@@ -85,27 +85,23 @@ export default {
       this.newOrder = newOrder;
 
       const newOrderStatusMessage = await apicomm.pushNewDrinkOrderToQueue(this.newOrder);
-
+      this.newOrderStatus.statusCode = newOrderStatusMessage.statusCode;
+      
       try {
-        const newOrderStatus = newOrderStatusMessage["data"];
-        
-        console.log(newOrderStatus);
+        const newOrderStatus = newOrderStatusMessage.data;
         
         if (newOrderStatus && newOrderStatus.newOrderStatus) {
           this.newOrderStatus.orderPushedSuccessfully = newOrderStatus.newOrderStatus.orderPushedSuccessfully;
           this.newOrderStatus.pushedOrderNumber = newOrderStatus.newOrderStatus.pushedOrderNumber;
-
-          if (this.newOrderStatus.orderPushedSuccessfully) {
-            this.changeScreen('DrinkOrderConclusion');
-          } else {
-            this.changeScreen('HomePage');
-          }
+          
+          this.changeScreen('DrinkOrderConclusion');
         }
       } catch(error) {
         console.log(error);
         console.log(
           `Unable to push new order to queue. Status Code: ${newOrderStatusMessage['statusCode']}`);
-        this.changeScreen('HomePage');
+        this.newOrderStatus.orderPushedSuccessfully = false;
+        this.changeScreen('DrinkOrderConclusion');
       }
     }
   }
@@ -115,9 +111,8 @@ export default {
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
-html, body {
+html {
   margin: 0;
-  // overflow: scroll;
   background-color: rgb(0, 0, 0);
   user-select: none;
   @media only screen and (min-width: 992px) {
@@ -127,6 +122,10 @@ html, body {
       font-size: 7.5vw;
   }
   touch-action: pan-y;
+}
+body {
+  margin: 0;
+  // overflow: scroll;
   margin-bottom: 5vh;
 }
 

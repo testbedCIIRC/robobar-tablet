@@ -1,16 +1,29 @@
 <template>
   <div class="content">
-    <h1>
-      YOUR ORDER IS <br/> IN THE QUEUE
-    </h1>
-    <div>
-      <h2>
-        Your order number:
-      </h2>
-      <div class="order-number">
-        {{ orderNumber }}
+    <template v-if="newOrderStatus.orderPushedSuccessfully">
+      <h1>
+        YOUR ORDER IS <br/> IN THE QUEUE
+      </h1>
+      <div>
+        <h2>
+          Your order number:
+        </h2>
+        <div class="order-number">
+          {{ newOrderStatus.pushedOrderNumber }}
+        </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <h1>
+        Unfortunately, we could not process your order.
+      </h1>
+      <h2>
+        Please, try again later.
+      </h2>
+      <div class="status-code">
+        (Status code: {{ newOrderStatus.statusCode }}) 
+      </div>
+    </template>
     <!-- <h2>
       Approximate queue wait time:
     </h2>
@@ -18,7 +31,7 @@
       12 m 34 s
     </div> -->
     <!-- <div class="button-div"><button>Confirm</button></div> -->
-    <button @click="goToHomePage();">Confirm</button>
+    <button @click="goToHomePage">Confirm</button>
   </div>
 </template>
 
@@ -26,16 +39,22 @@
 export default {
   name: 'DrinkOrderConclusion',
   props: {
-    orderNumber: {
-      type: Number,
-      default: undefined,
-    }
+    newOrderStatus: {
+      type: Object,
+      default: () => {
+        return {
+          orderPushedSuccessfully: undefined,
+          pushedOrderNumber: undefined,
+          statusCode: undefined,
+        }
+      }
+    },
   },
   methods: {
     goToHomePage() {
       this.$emit('changeScreen', 'HomePage');
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -84,6 +103,11 @@ export default {
         @media only screen and (max-width: 991px) {
             font-size: 6vw;
         }
+    }
+    .status-code {
+      text-align: center;
+      font-size: 5vw;
+      opacity: 33%;
     }
     .order-number {
       text-align: center;
