@@ -1,25 +1,40 @@
+export const RETURN_CODES = {
+    OK: 0,
+    NOK: -1,
+    TIMEOUT: -2,
+    NO_CONNECTION: -3,
+}
+
+const DEFAULT_URL = "http://127.0.0.1:5000";
+
 export async function getDrinkTypesFromApi() {
-    return fetch("http://127.0.0.1:5000/DrinkTypes/")
+    return fetch(`${DEFAULT_URL}/DrinkTypes/`)
         .then(response => response.json())
         .then(data =>{return data});
 }
 
 export async function getQueueStateFromApi() {
-    return fetch("http://127.0.0.1:5000/QueueState/")
+    return fetch(`${DEFAULT_URL}/QueueState/`)
         .then(response => response.json())
         .then(data =>{return data});
 }
 
-export async function pushNewDrinkOrderToQueue(newDrinkOrder) {
-    return fetch("http://127.0.0.1:5000/NewDrinkInQueue/", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newDrinkOrder),
-    })
+export async function sendOrderRequest(newDrinkOrder) {
+    return fetch(`${DEFAULT_URL}/NewDrinkInQueue/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newDrinkOrder),
+        })
         .then(response => response.json())
-        .then(data =>{return data});
+        .then(data =>{return data})
+        .catch(error => {
+            return {
+                code: error.code,
+                msg: error.toString()
+            }
+        });
 }
 
 // export async function getPickUpDrinksStateFromApi() {
