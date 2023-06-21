@@ -1,38 +1,56 @@
 <template>
-  <div class="content">
-    <h1>
-      YOUR ORDER IS <br/> IN THE QUEUE
-    </h1>
-    <div>
-      <h2>
-        Your order number:
-      </h2>
-      <div class="order-number">
-        123
-      </div>
+    <div class="content">
+        <template v-if="this.orderStore.orderState === stateEnum.RESULT_SUCCESS">
+            <h1>
+                YOUR ORDER IS <br/> IN THE QUEUE
+            </h1>
+            <div>
+                <h2>
+                    Your order number:
+                </h2>
+                <div class="order-number">
+                    {{ orderStore.assignedOrderId }}
+                </div>
+            </div>
+        </template>
+        <template v-else>
+            <h1>
+                YOUR ORDER COULD NOT BE PROCESSED
+            </h1>
+            <div>
+                <h2>
+                    Please, try again. :(
+                </h2>
+            </div>
+        </template>
+        <button @click="goToHomePage();">Confirm</button>
     </div>
-    <!-- <h2>
-      Approximate queue wait time:
-    </h2>
-    <div class="order-number">
-      12 m 34 s
-    </div> -->
-    <!-- <div class="button-div"><button>Confirm</button></div> -->
-    <button @click="goToHomePage();">Confirm</button>
-  </div>
 </template>
 
 <script>
+import { useOrderStore, STATE } from '@/stores/order';
+
 export default {
-  name: 'DrinkOrderConclusion',
-  props: {
-    msg: String
-  },
-  methods: {
-    goToHomePage() {
-      this.$emit('changeScreen', 'HomePage');
+    name: 'DrinkOrderConclusion',
+    data() {
+        return {
+            orderStore: null,
+            stateEnum: STATE,
+        }
+    },
+    beforeMount() {
+        this.orderStore = useOrderStore();
+    },
+    mounted() {
+        window.setTimeout(() =>{
+            this.$emit('changeScreen', 'HomePage');
+        }, 5000);
+    },
+    methods: {
+        goToHomePage() {
+            this.$emit('changeScreen', 'HomePage');
+        }
     }
-  }
 }
 </script>
 
@@ -102,7 +120,7 @@ export default {
       }
       align-self: center;
       margin-top: 2vh;
-      font-size: .6rem;
+      @apply text-2xl sm:text-5xl;
       vertical-align: middle;
       border-radius: 10px;
       background-color: #000;

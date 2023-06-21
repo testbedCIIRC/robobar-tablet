@@ -1,5 +1,5 @@
 <template>
-<svg :class="{white: isWhite}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg :class="{white: isWhite}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 64">
 <title>Beer</title>
 <g id="Beer">
 <path d="M47,25a7,7,0,0,0-7,7V42a7,7,0,0,0,14,0V32A7,7,0,0,0,47,25Zm5,17a5,5,0,0,1-10,0V32a5,5,0,0,1,10,0Z"/>

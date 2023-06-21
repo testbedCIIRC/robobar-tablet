@@ -3,31 +3,25 @@
     <h1>
       Hold on! We are processing your order!
     </h1>
-    <button @click="goToHomePage();">Confirm</button>
+    <svg
+      class="tapCircle loading" viewBox="0 0 100 100">
+        <path id="loading-arc" stroke="#fff" stroke-width="2"/>
+    </svg>
+    <!-- <button @click="goToHomePage();">Confirm</button> -->
   </div>
 </template>
 
 <script>
+import { useOrderStore } from '@/stores/order';
+
 export default {
   name: 'DrinkOrderProcessing',
-  props: {
-    newOrder: {
-      type: Object,
-      default: () => {
-        return {
-          drinkId: undefined,
-          subChoices: {
-            useIce: undefined,
-            useLargeGlass: undefined,
-          },
-        };
-      }
-    }
-  },
-  methods: {
-    goToHomePage() {
-      this.$emit('changeScreen', 'HomePage');
-    }
+  async mounted() {
+    let orderStore = useOrderStore();
+    
+    await orderStore.sendOrder();
+    
+    this.$emit('changeScreen', 'DrinkOrderConclusion');
   },
 }
 </script>

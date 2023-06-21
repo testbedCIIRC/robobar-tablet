@@ -5,9 +5,9 @@ export const RETURN_CODES = {
     NO_CONNECTION: -3,
 }
 
-const DEFAULT_URL = "http://127.0.0.1:5000";
+const DEFAULT_URL = "http://10.35.129.230:5000";
 
-export async function getDrinkTypesFromApi() {
+export async function sendDrinkTypesRequest() {
     return fetch(`${DEFAULT_URL}/DrinkTypes/`)
         .then(response => response.json())
         .then(data =>{return data});

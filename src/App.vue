@@ -1,5 +1,10 @@
 <template>
-  <component @makeOrder="makeOrder" :newOrder="newOrder" :drinkTypes="drinkTypes" :drinkGroupEnum="drinkGroupEnum" :is="currentPage" @changeScreen="changeScreen($event)" v-bind="{'newScreen':'HomePage'}"></component>
+  <component 
+    class="w-11/12 lg:w-1/3 py-4"
+    :is="currentPage"
+    @changeScreen="changeScreen($event)" 
+    v-bind="{'newScreen':'HomePage'}">
+  </component>
 </template>
 
 <script>
@@ -7,7 +12,8 @@ import HomePage from '@/components/HomePage.vue'
 import DrinkGroupChoice from  '@/components/DrinkGroupChoice.vue'
 import DrinkOrderConclusion from '@/components/DrinkOrderConclusion.vue'
 import DrinkOrderProcessing from '@/components/DrinkOrderProcessing.vue'
-import * as apicomm from '@/scripts/api-communication.js'
+import DrinkSubChoice from './components/DrinkSubChoice.vue'
+import { useDrinkStore } from '@/stores/drink'
 
 export default {
   name: 'App',
@@ -16,60 +22,24 @@ export default {
       DrinkGroupChoice,
       DrinkOrderConclusion,
       DrinkOrderProcessing,
+      DrinkSubChoice
   },
   data() {
     return {
       currentPage: 'HomePage',
-      drinkId: -1,
-      drinkTypes: undefined,
-      drinkGroupEnum: Object.freeze({
-          coffeeDrinks: 1,
-          softDrinks: 2,
-          alcoholicDrinks: 3,
-      }),
-      newOrder: {
-        drinkId: undefined,
-        subChoices: {
-          useIce: undefined,
-          useLargeGlass: undefined,
-        },
-      },
-      newOrderStatus: {
-        orderPushedSuccessfully: undefined,
-        pushedOrderNumber: undefined,
-      },
+      drinkStore: null,
     }
   },
-  async created() {
-    let drinkTypes = await apicomm.getDrinkTypesFromApi();
-    this.drinkTypes = drinkTypes["drinkTypes"];
+  async mounted() {
+    this.drinkStore = useDrinkStore();
+    await this.drinkStore.requestNewDrinkTypes();
     
     // TODO: periodic PLC/OPC status update
   },
   methods: {
-    changeScreen(newScreenName, drinkId) {
-      if (drinkId === undefined) {
-        this.currentPage = newScreenName;
-      } else {
-        this.drinkId = drinkId;
-      }
-    },
-    async makeOrder(newOrder) {
-      this.changeScreen('DrinkOrderProcessing');
-      this.newOrder = newOrder;
+    changeScreen(newScreenName) {
+      this.currentPage = newScreenName;
 
-      let newOrderStatus = await apicomm.pushNewDrinkOrderToQueue(this.newOrder);
-      console.log(newOrderStatus);
-      if (newOrderStatus && newOrderStatus.newOrderStatus) {
-        this.newOrderStatus.orderPushedSuccessfully = newOrderStatus.newOrderStatus.orderPushedSuccessfully;
-        this.newOrderStatus.pushedOrderNumber = newOrderStatus.newOrderStatus.pushedOrderNumber;
-
-        if (this.newOrderStatus.orderPushedSuccessfully) {
-          this.changeScreen('DrinkOrderConclusion');
-        } else {
-          this.changeScreen('HomePage');
-        }
-      }
     }
   }
 }
@@ -83,17 +53,11 @@ html, body {
   // overflow: scroll;
   background-color: rgb(0, 0, 0);
   user-select: none;
-  @media only screen and (min-width: 992px) {
-      font-size: 4vw;
-  }
-  @media only screen and (max-width: 991px) {
-      font-size: 7.5vw;
-  }
   touch-action: pan-y;
-  margin-bottom: 5vh;
 }
 
 #app {
+  // @apply h-[70vh];
   font-family: Inter, sans-serif;
   color: #ffffff;
   // width: 100%;
@@ -103,11 +67,11 @@ html, body {
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: center;
-  height:fit-content;
+  height: fit-content;
 }
 
-h1 {
-  font-weight: 1000;
+.pg-header {
+  @apply text-4xl sm:text-7xl text-center;
 }
 
 span, button {

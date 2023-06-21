@@ -7,7 +7,7 @@
           <div class="icons">
             <template v-if="drinkType.parameters.coffeeStrength !== undefined && drinkType.parameters.coffeeStrength > 0"><CoffeeBeanIconSvg v-for="n in drinkType.parameters.coffeeStrength" :key="n">{{n}}</CoffeeBeanIconSvg></template>
             <template v-if="drinkType.parameters.coffeeStrength > 0 && drinkType.parameters.volumeInMl > 0 && drinkType.parameters.milkPercentage > 0">, </template>
-            <template v-if="drinkType.parameters.volumeInMl !== undefined && drinkType.parameters.volumeInMl > 0"><BeakerIconSvg /> {{ drinkType.parameters.volumeInMl }}ml</template>
+            <template v-if="drinkType.parameters.volumeInMl !== undefined && drinkType.parameters.volumeInMl > 0"><BeakerIconSvg /> {{ drinkType.parameters.volumeInMl }} ml</template>
             <template v-if="drinkType.parameters.volumeInMl > 0 && drinkType.parameters.milkPercentage > 0">, </template>
             <template v-if="drinkType.parameters.milkPercentage !== undefined && drinkType.parameters.milkPercentage > 0"><MilkIconSvg /> {{ drinkType.parameters.milkPercentage }} %</template>
           </div>
@@ -25,61 +25,22 @@ import MilkIconSvg from '@/components/svg-components/MilkIconSvg.vue';
 export default {
     name: "GroupDrinks",
     methods: {
-      selectDrink(drinkId) {
-        this.$emit('selectDrink', drinkId);
-      },
+        selectDrink(drinkId) {
+            this.$emit('selectDrink', drinkId);
+        },
     },
     props: {
-      drinkTypes: {
-        type: Array,
-        default: () => {
-          return [];
+        drinkTypes: {
+            type: Array,
+            default: () => {
+                return [];
+            }
         }
-      },
-      drinks: {
-        type: Object,
-        default: () => {
-          return {
-            rowCount: 3,
-            columnCount: 2,
-            buttons: [
-              {
-                id: 1,
-                label: 'Choice 1',
-                parameters: {
-                  // strength: 2,
-                  // milkPerc: 30,
-                  volumeInMl: 150,
-                  choices: [
-                    {
-                      id: 1,
-                      label: '300 ml',
-                    },
-                    {
-                      id: 2,
-                      label: '500 ml',
-                    }
-                  ]
-                }
-              },
-              {
-                id: 2,
-                label: 'Choice 2',
-                parameters: {
-                  // strength: 3,
-                  // milkPerc: 30,
-                  // volumeInMl: 150,
-                }
-              },
-            ]
-          }
-        }
-      }
     },
     components: {
-      CoffeeBeanIconSvg,
-      BeakerIconSvg,
-      MilkIconSvg
+        CoffeeBeanIconSvg,
+        BeakerIconSvg,
+        MilkIconSvg
     }
 }
 </script>
@@ -107,7 +68,8 @@ export default {
   }
   
   button {
-    font-size: 0.6rem;
+    @apply text-2xl sm:text-5xl;
+
     @media only screen and (min-width: 992px) {
         // font-size: 3vw;
         height: 8vw;
@@ -139,7 +101,7 @@ export default {
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    align-items: stretch;
+    align-items: center;
 
     .icons {
       flex-basis: 40%;
@@ -151,6 +113,7 @@ export default {
       overflow: hidden;
       text-transform: none;
       font-size: 0.7em;
+      @apply flex flex-row items-center text-sm sm:text-2xl;
       svg {
         // position: absolute;
         // margin: auto;
@@ -164,7 +127,7 @@ export default {
         fill: white;
         font-size: 40px;
         vertical-align: middle;
-        margin-left: 1%;
+        @apply mr-1;
       }
     }
 

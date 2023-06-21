@@ -1,32 +1,100 @@
-<template v-if="activeSubChoice !== undefined">
-  <div id="drink-sub-choice" class="gridContainer" v-if="Array.isArray(activeSubChoice.availableOptions)" :style="{display: activeSubChoice.availableOptions.length < 2 ? 'none' : 'grid'}">
-    <button class="drinkGroupButton" v-for="option in activeSubChoice.availableOptions" :key="option.id" @click="selectSubChoice(option.value);">
-      <div class="text"><span>{{ option.label }}</span></div>
-    </button>
+<template>
+  <div class="lg:gap-4 gap-16 h-[70vh]
+    flex flex-col justify-between items-center">
+    <div class="w-full mt-16
+                relative">
+      <div class="absolute left-5 h-[180%] top-[-10%]
+      flex flex-col justify-center items-center gap-4" @click="cancelOrder()">
+        <svg class="h-2/3 stroke-white stroke-[8]" viewBox="0 0 100 100">
+          <line x1="0" y1="0" x2="100" y2="100" />
+          <line x1="100" y1="0" x2="0" y2="100" />
+        </svg>
+        <span class="text-2xl text-center">CANCEL<br/>ORDER</span>
+      </div>
+      <h1 class="pg-header">
+        NEW ORDER
+      </h1>
+    </div>
+    <div 
+      id="drink-sub-choice" 
+      class="gridContainer" 
+      v-if="Array.isArray(availableOptions)" 
+      :style="{display: availableOptions.length < 2 ? 'none' : 'grid'}">
+  
+      <button 
+        class="drinkGroupButton" 
+        v-for="(option, index) in availableOptions" 
+        :key="index" @click="selectSubChoice(option.value);">
+  
+        <div class="text">
+          <span>
+            {{ option.label }}
+          </span>
+        </div>
+      </button>
+    </div>
   </div>
 </template>
+<!-- <template v-if="activeSubChoice !== undefined">
+  
+</template> -->
 
 <script>
+import { useOrderStore } from '@/stores/order';
+import { useDrinkStore } from '@/stores/drink';
+
 export default {
     name: "DrinkSubChoice",
-    props: {
-      activeSubChoice: {
-          type: Object,
-          default: () => { 
-            return {
-              key: undefined,
-              availableOptions: undefined,
-            }
-          }
-      },
+    components: {
     },
-    methods: {
-      selectSubChoice(optionValue) {
-        this.$emit('selectSubChoice', optionValue);
+    data() {
+      return {
+        orderStore: null,
+        drinkStore: null,
+        optionLabel: null,
+        availableOptions: null
       }
     },
-    components: {
-    }
+    mounted() {
+      this.orderStore = useOrderStore();
+      this.drinkStore = useDrinkStore();
+
+      this.showChoiceOptions();
+      
+    },
+    methods: {
+      showChoiceOptions() {
+        const drinkId = this.orderStore.drinkId;
+        if (this.drinkStore.drinkTypes[drinkId].iceOption
+          && this.orderStore.useIce === null) {
+
+            this.optionLabel = "ice";
+            this.availableOptions = this.drinkStore.iceOptions;
+        } else if (this.drinkStore.drinkTypes[drinkId].volumeOption
+          && this.orderStore.useLargeGlass === null) {
+
+            this.optionLabel = "volume";
+            this.availableOptions = this.drinkStore.volumeOptions;
+        } else {
+          this.$emit("changeScreen", "DrinkOrderProcessing");
+        }
+      },
+      selectSubChoice(optionValue) {
+        if (this.optionLabel == "ice") {
+          this.orderStore.useIce = optionValue;
+        } else if (this.optionLabel == "volume") {
+          this.orderStore.useLargeGlass = optionValue;
+        } else {
+          throw Error(`Invalid option label received: ${optionValue}!`);
+        }
+
+        this.showChoiceOptions();
+      },
+      cancelOrder() {
+        this.orderStore.setDefaultOrder();
+        this.$emit('changeScreen', 'HomePage');
+      }
+    },
 }
 </script>
 
@@ -35,89 +103,12 @@ export default {
   box-shadow: 0 $shadow-size #ffffff;
 }
 .gridContainer {
-
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(1, 1fr);
-  gap: 1.5vw;
-  justify-items: stretch;
-  @media only screen and (min-width: 992px) {
-    row-gap: 2vw;
-  }
-
-  @media only screen and (max-width: 991px) {
-    row-gap: 2.5vw;
-  }
+  @apply w-full h-24 sm:h-48 grid grid-rows-1 grid-cols-2 gap-4 justify-stretch;
   
   button {
-    font-size: 0.6rem;
-    @media only screen and (min-width: 992px) {
-        min-height: 8vw;
-        @include sizedBoxShadow(0.5vw);
-    }
-
-    @media only screen and (max-width: 991px) {
-        min-height: 20vw;
-        @include sizedBoxShadow;
-    }
-    padding: 1vw 0 0 0;
-    row-gap: 0.2rem;
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    background-color: #000;
-    border: #ffffff;
-    border-width: 2px;
-    border-style: solid;
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: 700;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    align-items: stretch;
-
-    .icons {
-      flex-basis: 40%;
-      height: 40%;
-      overflow: hidden;
-      text-transform: none;
-      font-size: 0.7em;
-      svg {
-        height: 40%;
-        fill: white;
-        font-size: 40px;
-        vertical-align: middle;
-      }
-    }
-
-    .text {
-      flex-basis: 50%;
-      display: flex;
-      flex-flow: column nowrap;
-      justify-content: center;
-      span {
-        text-align: center;
-      }
-    }
+    @apply text-2xl sm:text-5xl h-full rounded-lg
+    border border-white;
+    @include sizedBoxShadow()
   }
-}
-
-button.activated {
-  color: #000;
-  background-color: #fff;
-}
-button:active {
-  @media only screen and (min-width: 992px) {
-      @include sizedBoxShadow(calc(0.5vw - 4px));
-  }
-
-  @media only screen and (max-width: 991px) {
-      @include sizedBoxShadow(calc(1vw - 4px));
-  }
-  transform: translateY(4px);
 }
 </style>

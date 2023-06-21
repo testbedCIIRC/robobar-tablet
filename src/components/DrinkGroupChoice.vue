@@ -1,143 +1,122 @@
 <template>
-  <div id="drink-group-choice" class="content">
-    <h1>
+  <div class="lg:gap-4 gap-16 h-full
+    flex flex-col justify-between items-center">
+    <h1 class="pg-header mt-16 mb-0">
       NEW ORDER
     </h1>
-    <nav :class="{'drink-group-chosen': drinkGroupChosen}">
-      <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.coffeeDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.coffeeDrinks}">
+    <nav class="w-full mt-32 h-48 sm:h-96
+    flex flex-row justify-between gap-2 sm:gap-4 items-stretch" :class="{'drink-group-chosen': drinkGroupChosen}">
+      <button 
+        class="drinkGroupButton" 
+        @click="setDrinkGroup(this.drinkStore.drinkGroupEnum.coffeeDrinks); hideDrinkGroupIcons()"
+        :class="{activated: drinkGroup === this.drinkStore.drinkGroupEnum.coffeeDrinks}">
+        
         <div class="icons"><CoffeeIconSvg /></div>
         <div class="text"><span>Coffee</span></div>
       </button>
-      <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.softDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.softDrinks}">
+      <button 
+        class="drinkGroupButton" 
+        @click="setDrinkGroup(this.drinkStore.drinkGroupEnum.softDrinks); hideDrinkGroupIcons()" 
+        :class="{activated: drinkGroup === this.drinkStore.drinkGroupEnum.softDrinks}">
+        
         <div class="icons"><SoftDrinkIconSvg /></div>
         <div class="text"><span>Soft drinks</span></div>
       </button>
-      <button class="drinkGroupButton" @click="setDrinkGroup(drinkGroupEnum.alcoholicDrinks); hideDrinkGroupIcons()" :class="{activated: drinkGroup === drinkGroupEnum.alcoholicDrinks}">
+      <button 
+        class="drinkGroupButton" 
+        @click="setDrinkGroup(this.drinkStore.drinkGroupEnum.alcoholicDrinks); hideDrinkGroupIcons()" 
+        :class="{activated: drinkGroup === this.drinkStore.drinkGroupEnum.alcoholicDrinks}">
+  
         <div class="icons"><AlcoholIconSvg /></div>
         <div class="text"><span>Alcohol</span></div>
       </button>
     </nav>
-    <GroupDrinks :drinkTypes="filteredDrinkTypes" @selectDrink="selectDrink" :class="{ hidden: !drinkGroupChosen }" :enabled="drinkGroup" />
-    <DrinkSubChoice @selectSubChoice="selectSubChoice" :activeSubChoice="activeSubChoice" />
+    <GroupDrinks 
+      :drinkTypes="filteredDrinkTypes" 
+      @selectDrink="selectDrink"
+      :class="{ hidden: !drinkGroupChosen }" 
+      :enabled="drinkGroup" />
   </div>
 </template>
 
 <script>
-// import CoffeeDrinks from '@/components/drink-group-components/CoffeeDrinks.vue';
-// import AlcoholDrinks from '@/components/drink-group-components/AlcoholDrinks.vue';
-// import SoftDrinks from '@/components/drink-group-components/SoftDrinks.vue';
 import CoffeeIconSvg from '@/components/svg-components/CoffeeIconSvg.vue';
 import SoftDrinkIconSvg from '@/components/svg-components/SoftDrinkIconSvg.vue';
 import AlcoholIconSvg from '@/components/svg-components/AlcoholIconSvg.vue';
-import DrinkSubChoice from './DrinkSubChoice.vue';
+// import DrinkSubChoice from './DrinkSubChoice.vue';
 import GroupDrinks from '@/components/drink-group-components/GroupDrinks.vue';
+import { useOrderStore } from '@/stores/order';
+import { useDrinkStore } from '@/stores/drink';
 
 export default {
     name: "DrinkGroupChoice",
-    props: {
-        drinkTypes: {
-          type: Array,
-          default: () => {return [];}
-        },
-        drinkGroupEnum: {
-          type: Object,
-          default: () => {return Object();}
-        }
+    components: {
+        CoffeeIconSvg,
+        SoftDrinkIconSvg,
+        AlcoholIconSvg,
+        // DrinkSubChoice,
+        GroupDrinks,
     },
     data() {
-      return {
-        drinkGroup: "none",
-        drinkGroupChosen: false,
-        drinkChosen: false,
-        newOrder: {
-          drinkId: undefined,
-          subChoices: {
-            useIce: undefined,
-            useLargeGlass: undefined,
-          },
-        },
-        activeSubChoice: {
-          key: undefined,
-          availableOptions: undefined,
-        },
-        filteredDrinkTypes: [],
-      }
+        return {
+            drinkGroup: "none",
+            drinkGroupChosen: false,
+            filteredDrinkTypes: [],
+            orderStore: null,
+            drinkStore: null,
+        }
+    }, 
+    async beforeMount() {
+        this.orderStore = useOrderStore();
+        this.drinkStore = useDrinkStore();
+
+        if (!this.drinkStore.drinkTypes) {
+            await this.drinkStore.requestNewDrinkTypes();
+        }
     },
-    components: {
-    //  CoffeeDrinks,
-    //  AlcoholDrinks,
-    //  SoftDrinks,
-     CoffeeIconSvg,
-     SoftDrinkIconSvg,
-     AlcoholIconSvg,
-     DrinkSubChoice,
-     GroupDrinks,
-    }, methods: {
-      selectSubChoice(optionValue) {
-        // this.$emit('changeScreen', 'DrinkOrderConclusion');
-        this.newOrder.subChoices[this.activeSubChoice.key] = optionValue;
-        if (this.activeSubChoice.key == "useIce" && this.drinkTypes[this.drinkId].volumeOption) {
-          this.activeSubChoice.key = "useLargeGlass";
-          this.activeSubChoice.availableOptions = [
-            { label: '250 ML', value: false, id: 0 },
-            { label: '400 ML', value: true, id: 1 },
-          ];
-        } else {
-          this.$emit('makeOrder', this.newOrder);
-        }
-      },
-      selectDrink(drinkId) {
-        this.drinkChosen = true;
-        this.newOrder.drinkId = drinkId;
+    mounted() {
+      // let h1 = document.getElementsByTagName("h1")[0];
+      // h1.innerHTML = 'a' + this.drinkStore.drinkTypes;
+      // console.log(h1.innerHTML);
+    },
+    methods: {
+        selectDrink(drinkId) {
+            this.orderStore.drinkId = drinkId;
 
-        const $nav = document.getElementsByTagName("nav")[0];
-        const $groupDrink = document.getElementsByClassName("drinkGridContainer")[0];
-        $nav.style.display = "none";
-        $groupDrink.style.display = "none";
+            this.$emit("changeScreen", "DrinkSubChoice");
+        },
+        setDrinkGroup(drinkGroupId) {
+            this.drinkGroup = drinkGroupId;
+            this.filteredDrinkTypes = this.getFilteredDrinkTypes(drinkGroupId);
+            console.log(this.filteredDrinkTypes);
+        },
+        getFilteredDrinkTypes(drinkGroupId) {
+            let filteredDrinkTypes = Array();
+            this.drinkStore.drinkTypes.forEach((drinkType) => {
+                if (drinkType.drinkGroups) {
+                    if (drinkType.drinkGroups.alcohol 
+                        && drinkGroupId === this.drinkStore.drinkGroupEnum.alcoholicDrinks) {
+                            filteredDrinkTypes.push(drinkType);
+                    } else if (drinkType.drinkGroups.coffee 
+                        && drinkGroupId === this.drinkStore.drinkGroupEnum.coffeeDrinks) {
+                            filteredDrinkTypes.push(drinkType);
+                    } else if (drinkType.drinkGroups.soft 
+                        && drinkGroupId === this.drinkStore.drinkGroupEnum.softDrinks) {
+                            filteredDrinkTypes.push(drinkType);
+                    }
+                }
+            });
 
-        if (this.drinkTypes[drinkId].iceOption) {
-          this.activeSubChoice.key = "useIce";
-          this.activeSubChoice.availableOptions = [
-            { label: 'WITHOUT ICE', value: false, id: 0 },
-            { label: 'WITH ICE', value: true, id: 1 },
-          ];
-          this.newOrder.subChoices.useIce = false;
-        } else if (this.drinkTypes[drinkId].volumeOption) {
-          this.activeSubChoice.key = "useLargeGlass";
-          this.activeSubChoice.availableOptions = [
-            { label: '250 ML', value: false, id: 0 },
-            { label: '400 ML', value: true, id: 1 },
-          ];
-        } else {
-          this.newOrder.subChoices.useIce = false;
-          this.newOrder.subChoices.useLargeGlass = false;
-          this.$emit('makeOrder', this.newOrder);
-        }
-      },
-      setDrinkGroup(event) {
-        this.drinkGroup = event;
-        this.filteredDrinkTypes = Array(),
-
-        this.drinkTypes.forEach((drinkType) => {
-          if (drinkType.drinkGroups) {
-            if (drinkType.drinkGroups.alcohol && event === this.drinkGroupEnum.alcoholicDrinks) {
-              this.filteredDrinkTypes.push(drinkType);
-            } else if (drinkType.drinkGroups.coffee && event === this.drinkGroupEnum.coffeeDrinks) {
-              this.filteredDrinkTypes.push(drinkType);
-            } else if (drinkType.drinkGroups.soft && event === this.drinkGroupEnum.softDrinks) {
-              this.filteredDrinkTypes.push(drinkType);
+            return filteredDrinkTypes;
+        },
+        hideDrinkGroupIcons() {
+            const $nav = document.getElementsByTagName("nav")[0];
+            const $navButtonSvgArray = $nav.getElementsByClassName("icons");
+            for(const $elem of $navButtonSvgArray) {
+            $elem.style.display = "none";
             }
-          }
-        });
-      },
-      hideDrinkGroupIcons() {
-        const $nav = document.getElementsByTagName("nav")[0];
-        const $navButtonSvgArray = $nav.getElementsByClassName("icons");
-        for(const $elem of $navButtonSvgArray) {
-          $elem.style.display = "none";
-        }
-        this.drinkGroupChosen = true;
-      },
+            this.drinkGroupChosen = true;
+        },
 
     }
 }
@@ -150,155 +129,45 @@ export default {
 @mixin sizedBoxShadow($shadow-size: 1vw) {
   box-shadow: 0 $shadow-size #ffffff;
 }
-
 .hidden {
   display: none;
 }
 
-.content {
-    @media only screen and (min-width: 992px) {
-        width: 60%;
-        min-height: 75vh;
-        margin-top: 5vh;
-    }
+.drink-group-chosen {
+  @apply h-fit mt-0;
 
-    @media only screen and (max-width: 991px) {
-        width: 90%;
-        min-height: 75vh;
-        margin-top: 5vh;
-    }
-    // position: absolute;
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: stretch;
-    justify-content: center;
-    gap: 3vh;
-
-    h1 {
-        text-align: center;
-        @media only screen and (min-width: 992px) {
-            font-size: 4vw;
-        }
-        @media only screen and (max-width: 991px) {
-            font-size: 7.5vw;
-        }
-    }
-
-    nav {
-      width: 100%;
-      // height: 30%;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1.5vw;
-      justify-items: stretch;
-      @media only screen and (min-width: 992px) {
-          height: 10vw;
-      }
-      @media only screen and (max-width: 991px) {
-          height: 35vw;
-      }
-      // transition-property: height;
-      // transition-duration: 0.3s;
-      // svg {
-      //   max-height: 60%;
-      //   max-width: 30%;
-      //   vertical-align: middle;
-      // }
-    }
-
-    .drink-group-chosen {
-      height: 10%;
-      @media only screen and (min-width: 992px) {
-          height: 8vw;
-      }
-      @media only screen and (max-width: 991px) {
-          height: 13vw;
-      }
-      button {
-        padding: 0;
-        min-height: 0;
-        height: 100%;
-      }
-    }
-
-    button {
-      @media only screen and (min-width: 992px) {
-          @include sizedBoxShadow(calc(0.5vw));
-          // font-size: .6rem;
-          height: 20vw;
-      }
-
-      @media only screen and (max-width: 991px) {
-          @include sizedBoxShadow(calc(1vw));
-          // font-size: .4rem;
-          height: 35vw;
-      }
-      font-size: .6rem;
-      vertical-align: middle;
-      padding: 10% 0 0 0;
-      border-radius: 10px;
-      background-color: #000;
-      border: 2px solid #ffffff;
-      @include sizedBoxShadow;
-      color: #fff;
-      text-transform: uppercase;
-      font-weight: 700;
-      overflow: hidden;
-      // text-overflow: ellipsis;
-
-      display: flex;
-      flex-flow: column nowrap;
-      // row-gap: 0.4rem;
-      justify-content: center;
-      align-items: stretch;
-
-      .icons {
-        flex-basis: 50%;
-        height: 50%;
-        // max-height: 60%;
-        // max-width: 100%;
-        // margin: auto;
-        overflow: hidden;
-        font-size: 0.8em;
-        svg {
-          // width: 100%;
-          // width:auto;
-          height: 90%;
-          width: 90%;
-          // max-height: 7vw;
-          // max-height: 100%;
-        }
-      }
-
-      .text {
-        // width: 100%;
-        // height: 20%;
-        flex-basis: 35%;
-        position: relative;
-        span {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%,-50%);
-          text-align: center;
-          margin: auto;
-        }
-      }
-    }
-
-    button.activated {
-      color: #000;
-      background-color: #fff;
-    }
-    button:active {
-      @media only screen and (min-width: 992px) {
-          @include sizedBoxShadow(calc(0.5vw - 4px));
-      }
-
-      @media only screen and (max-width: 991px) {
-          @include sizedBoxShadow(calc(1vw - 4px));
-      }
-      transform: translateY(4px);
-    }
+  .text {
+    @apply my-4;
+  }
 }
+
+button {
+  @apply text-2xl sm:text-5xl;
+}
+
+.drinkGroupButton {
+  @apply w-full py-4 rounded-lg overflow-hidden
+  border border-white
+  flex flex-col justify-center items-center;
+  @include sizedBoxShadow;
+  
+  .text {
+    @apply h-16 sm:h-32 mt-4 
+    flex flex-col justify-center overflow-hidden;
+  }
+}
+
+.icons {
+  @apply w-2/3;
+  // max-height: 60%;
+  // max-width: 100%;
+  // margin: auto;
+  overflow: hidden;
+}
+
+button.activated {
+  color: #000;
+  background-color: #fff;
+}
+
 </style>
