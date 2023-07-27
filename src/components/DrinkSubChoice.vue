@@ -65,6 +65,8 @@ export default {
     methods: {
       showChoiceOptions() {
         const drinkId = this.orderStore.drinkId;
+        if (this.drinkStore.drinkTypes[drinkId].drinkGroups.alcohol)
+          this.orderStore.useLargeGlass = true;
         if (this.drinkStore.drinkTypes[drinkId].iceOption
           && this.orderStore.useIce === null) {
 
