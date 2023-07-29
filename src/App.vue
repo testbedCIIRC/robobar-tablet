@@ -28,15 +28,19 @@ export default {
     return {
       currentPage: 'HomePage',
       drinkStore: null,
+      drinkTypesIntervalId: null,
     }
   },
   async mounted() {
     this.drinkStore = useDrinkStore();
-    await this.drinkStore.requestNewDrinkTypes();
-    
-    // TODO: periodic PLC/OPC status update
+    await this.drinkTypesRequestRecursion();
   },
   methods: {
+    async drinkTypesRequestRecursion() {
+      await this.drinkStore.requestNewDrinkTypes();
+
+      setTimeout(this.drinkTypesRequestRecursion, 5000);
+    },
     changeScreen(newScreenName) {
       this.currentPage = newScreenName;
 

@@ -5,7 +5,7 @@ export const RETURN_CODES = {
     NO_CONNECTION: -3,
 }
 
-const DEFAULT_URL = "http://10.35.91.24:5000";
+const DEFAULT_URL = "http://10.35.91.246:5000";
 
 export async function sendDrinkTypesRequest() {
     return fetch(`${DEFAULT_URL}/DrinkTypes/`)
