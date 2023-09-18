@@ -2,10 +2,18 @@
     <div class="lg:gap-4 gap-16 h-[70vh] sm:h-[80vh]
     flex flex-col justify-between items-center">
         <div class="w-full
-        flex flex-row justify-between flex-nowrap">
-            <img class="w-1/3 lg:w-64" src="@/assets/RGB_RICAIP_WHITE_crop.svg" alt="Ricaip logo">
-            <img class="w-1/12 lg:w-20" src="@/assets/logo_CIIRC_zkratka_negativ.svg" alt="CIIRC logo">
-            <img class="w-1/3 lg:w-64" src="@/assets/Pilsner_Urquell_logo_bile.svg" alt="Pilsner logo">
+            flex flex-col justify-evenly gap-4">
+            <div class="w-full
+            flex flex-row justify-evenly flex-nowrap">
+                <img class="w-1/3 lg:w-64" src="@/assets/RGB_RICAIP_WHITE_crop.svg" alt="Ricaip logo">
+                <img class="w-1/12 lg:w-20" src="@/assets/logo_CIIRC_zkratka_negativ.svg" alt="CIIRC logo">
+                <img class="w-1/3 lg:w-64" src="@/assets/Pilsner_Urquell_logo_bile.svg" alt="Pilsner logo">
+                
+            </div>
+            <div class="w-full
+                flex flex-row justify-center flex-nowrap">
+                <img class="w-1/3 lg:w-64" src="@/assets/Coca-cola-white.svg" alt="Coca cola logo">
+            </div>
         </div>
         <h1 class="pg-header">
             ORDER A DRINK!
