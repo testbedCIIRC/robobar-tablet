@@ -50,7 +50,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 html, body {
   margin: 0;
