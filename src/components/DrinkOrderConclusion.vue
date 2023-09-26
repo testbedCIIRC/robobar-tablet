@@ -56,7 +56,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 @mixin sizedBoxShadow($shadow-size: 1vw) {
   box-shadow: 0 $shadow-size #ffffff;
 }

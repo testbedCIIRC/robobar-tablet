@@ -79,7 +79,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .rotating {
     animation: rotating 1s linear infinite;
