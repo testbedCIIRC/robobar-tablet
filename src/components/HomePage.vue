@@ -2,18 +2,17 @@
     <div class="lg:gap-4 gap-16 h-[70vh] sm:h-[80vh]
     flex flex-col justify-between items-center">
         <div class="w-full
-            flex flex-col justify-evenly items-center gap-4">
+            flex flex-col justify-evenly items-center gap-8">
             <div class="w-full
-            flex flex-row justify-center gap-8 flex-nowrap">
-                <img class="w-1/3 lg:w-64" src="@/assets/RGB_RICAIP_WHITE_crop.svg" alt="Ricaip logo">
-                <img class="w-1/12 lg:w-20" src="@/assets/logo_CIIRC_zkratka_negativ.svg" alt="CIIRC logo">
-                <img class="w-1/4 lg:w-64" src="@/assets/Pilsner_Urquell_logo_bile.svg" alt="Pilsner logo">
-                
+            flex flex-row justify-center items-center gap-8 flex-nowrap">
+                <img class="w-1/3 md:w-48" src="@/assets/RGB_RICAIP_WHITE_crop.svg" alt="Ricaip logo">
+                <img class="w-1/12 md:w-24" src="@/assets/logo_CIIRC_zkratka_negativ.svg" alt="CIIRC logo">
+                <img class="w-1/3 md:w-44 md:h-20" src="@/assets/Pilsner_Urquell_logo_bile.svg" alt="Pilsner logo">
             </div>
             <div class="w-full
                 flex flex-row justify-center gap-8 flex-nowrap">
-                <img class="w-1/4 lg:w-48" src="@/assets/Coca-cola-white.svg" alt="Coca cola logo">
-                <img class="w-1/6 lg:w-36" src="@/assets/costa-logo.svg" alt="Costa Coffee logo">
+                <img class="w-1/4 md:w-48" src="@/assets/Coca-cola-white.svg" alt="Coca cola logo">
+                <img class="w-1/4 md:w-48" src="@/assets/costa-we-are-serving.svg" alt="Costa Coffee logo">
             </div>
         </div>
         <h1 class="pg-header">
